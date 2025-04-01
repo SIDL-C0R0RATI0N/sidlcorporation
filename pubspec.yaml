@@ -1,7 +1,7 @@
 name: sidlcorporation
 description: "Application officiel de l'entreprise SIDL CORPORATION"
-publish_to: 'SIDL CORPORATION' # Remove this line if you wish to publish to pub.dev
-version: 1.0.0+1
+publish_to: 'SIDL CORPORATION'
+version: 0.0.1+1
 
 environment:
   sdk: '>=3.0.0 <4.0.0'
@@ -21,7 +21,6 @@ dependencies:
   shared_preferences: ^2.2.2
 
   # Connectivité et navigation
-  # connectivity_plus: ^5.0.2
   internet_connection_checker: ^1.0.0+1
   url_launcher: ^6.2.1
 
@@ -43,39 +42,13 @@ flutter:
 # Configuration du splash screen
 flutter_native_splash:
   color: "#FFFFFF"
-  color_dark: "#121212"
-
-  image: assets/images/logo-light.png
-  image_dark: assets/images/logo-dark.png
-
-  android_12:
-    color: "#FFFFFF"
-    color_dark: "#121212"
-    image: assets/images/logo-light.png
-    image_dark: assets/images/logo-dark.png
-
+  image: assets/images/logo.png
   fullscreen: true
-
-  android: false
   ios: true
-  web: false
-
   web_image_mode: center
 
 # Configuration des icônes de l'application
 flutter_launcher_icons:
   image_path: "assets/images/logo.png"
-
-  android: "launcher_icon"
-  adaptive_icon_background: "#191919"
-  adaptive_icon_foreground: "assets/images/logo.png"
-  min_sdk_android: 21
-
   ios: true
   remove_alpha_ios: true
-
-  web:
-    generate: true
-    image_path: "assets/images/logo.png"
-    background_color: "#FFFFFF"
-    theme_color: "#1D9BF0"
