@@ -1,25 +1,42 @@
 workflows:
-  ios-workflow:
-    name: iOS Workflow
-    instance_type: mac_mini
+  android-ios-web:
+    name: SIDL CORPORATION App Build
+    instance_type: mac_mini_m1
+    max_build_duration: 60
     environment:
-      ios_signing:
-        distribution_type: app_store
-        bundle_identifier: com.votreapp.identifiant
-      vars:
-        XCODE_WORKSPACE: "ios/Runner.xcworkspace"
-        XCODE_SCHEME: "Runner"
+      flutter: stable
+      xcode: latest
+      cocoapods: default
+
     scripts:
-      - name: Flutter packages get
-        script: flutter packages pub get
-      - name: Install CocoaPods
-        script: cd ios && pod install
+      - name: Set up code signing
+      - script: |
+      - app-store-connect fetch-signing-files "fr.sidlcorporation.sidlcorporation" --type IOS_APP_STORE --create
+      - keychain initialize
+
+      - name: Set up local properties
+        script: echo "flutter.sdk=$HOME/programs/flutter" > "$CM_BUILD_DIR/android/local.properties"
+
+      - name: Install dependencies
+        script: flutter pub get
+
+      - name: Generate splash screens and icons
+        script: |
+          flutter pub run flutter_launcher_icons
+          flutter pub run flutter_native_splash:create
+
+      - name: Flutter analyze
+        script: flutter analyze
+
       - name: Flutter build iOS
-        script: flutter build ios --release --no-codesign
+        script: |
+          find . -name "Podfile" -execdir pod install \;
+          flutter build ios --release --no-codesign
+
     artifacts:
-      - build/ios/iphoneos/Runner.app
+      - build/ios/ipa/*.ipa
+
     publishing:
-      app_store_connect:
-        api_key: $APP_STORE_CONNECT_PRIVATE_KEY
-        key_id: $APP_STORE_CONNECT_KEY_IDENTIFIER
-        issuer_id: $APP_STORE_CONNECT_ISSUER_ID
+      email:
+        recipients:
+          - contact@sidl-corporation.fr
