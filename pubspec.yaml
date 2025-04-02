@@ -1,7 +1,7 @@
 name: sidlcorporation
 description: "Application officiel de l'entreprise SIDL CORPORATION"
 publish_to: 'SIDL CORPORATION'
-version: 0.0.1+3
+version: 0.0.1+4
 
 environment:
   sdk: '>=3.0.0 <4.0.0'
@@ -21,7 +21,7 @@ dependencies:
   shared_preferences: ^2.2.2
 
   # Connectivité et navigation
-  internet_connection_checker: ^1.0.0+1
+  # internet_connection_checker: ^1.0.0+1
   url_launcher: ^6.2.1
 
   # Configuration de l'application

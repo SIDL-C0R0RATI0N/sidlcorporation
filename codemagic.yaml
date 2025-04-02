@@ -17,6 +17,20 @@ workflows:
       - name: Install dependencies
         script: flutter pub get
 
+      - name: Désactiver toutes les capacités de notification
+        script: |
+          # Supprimer les modes d'arrière-plan
+          /usr/libexec/PlistBuddy -c "Delete :UIBackgroundModes" ios/Runner/Info.plist 2>/dev/null || true
+
+          # Supprimer tout entitlement de notification
+          touch ios/Runner/Runner.entitlements
+          echo '<?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+          </dict>
+          </plist>' > ios/Runner/Runner.entitlements
+
       - name: Generate splash screens and icons
         script: |
           flutter pub run flutter_launcher_icons

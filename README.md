@@ -1,5 +1,5 @@
 # SIDL CORPORATION (iOS)
-## Version : 0.0.1 (Alpha 1) - Développé par [SIDL CORPORATION](https://www.sidl-corporation.fr/)
+## Version : 0.0.1 (Alpha 4) - Développé par [SIDL CORPORATION](https://www.sidl-corporation.fr/)
 
 [![Codemagic build status](https://api.codemagic.io/apps/67e95ae95ee84b50fa27c3ae/67e95ae95ee84b50fa27c3ad/status_badge.svg)](https://codemagic.io/app/67e95ae95ee84b50fa27c3ae/67e95ae95ee84b50fa27c3ad/latest_build)
 
