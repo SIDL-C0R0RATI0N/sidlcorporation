@@ -1,6 +1,6 @@
 workflows:
-  android-ios-web:
-    name: SIDL CORPORATION App Build
+  ios-build:
+    name: SIDL CORPORATION iOS Build
     instance_type: mac_mini_m1
     max_build_duration: 60
     environment:
@@ -10,12 +10,9 @@ workflows:
 
     scripts:
       - name: Set up code signing
-      - script: |
-      - app-store-connect fetch-signing-files "fr.sidlcorporation.sidlcorporation" --type IOS_APP_STORE --create
-      - keychain initialize
-
-      - name: Set up local properties
-        script: echo "flutter.sdk=$HOME/programs/flutter" > "$CM_BUILD_DIR/android/local.properties"
+        script: |
+          app-store-connect fetch-signing-files "fr.sidlcorporation.sidlcorporation" --type IOS_APP_STORE --create
+          keychain initialize
 
       - name: Install dependencies
         script: flutter pub get
