@@ -8,6 +8,7 @@ import 'package:sidlcorporation/ui/screens/news_screen.dart';
 import 'package:sidlcorporation/ui/screens/settings_screen.dart';
 import 'package:sidlcorporation/ui/screens/webview_screen.dart';
 import 'package:sidlcorporation/ui/widgets/company_info_widget.dart';
+import 'dart:ui';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -28,10 +29,14 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = CupertinoTheme.of(context).brightness == Brightness.dark;
     return CupertinoTabScaffold(
       tabBar: CupertinoTabBar(
         // Style App Store avec effet translucide
-        backgroundColor: CupertinoColors.systemBackground.withOpacity(0.8),
+        backgroundColor: (isDarkMode
+            ? CupertinoColors.black
+            : CupertinoColors.systemBackground)
+            .withOpacity(0.7),
         border: const Border(
           top: BorderSide(
             color: CupertinoColors.separator,
@@ -73,10 +78,14 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildHomeTab() {
+    final isDarkMode = CupertinoTheme.of(context).brightness == Brightness.dark;
     return CupertinoPageScaffold(
       // NavigationBar avec effet blur inspiré de l'App Store
       navigationBar: CupertinoNavigationBar(
-        backgroundColor: CupertinoColors.systemBackground.withOpacity(0.8),
+        backgroundColor: (isDarkMode
+            ? CupertinoColors.black
+            : CupertinoColors.systemBackground)
+            .withOpacity(0.7),
         border: null, // Retirer la bordure
         middle: const Text(
           'SIDL CORPORATION',

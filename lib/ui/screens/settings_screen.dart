@@ -2,17 +2,22 @@ import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 import 'package:sidlcorporation/config/theme_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'dart:ui';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = CupertinoTheme.of(context).brightness == Brightness.dark;
     final themeProvider = Provider.of<ThemeProvider>(context);
 
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
-        backgroundColor: CupertinoColors.systemBackground.withOpacity(0.8),
+        backgroundColor: (isDarkMode
+            ? CupertinoColors.black
+            : CupertinoColors.systemBackground)
+            .withOpacity(0.7),
         border: null,
         middle: const Text(
           'Paramètres',

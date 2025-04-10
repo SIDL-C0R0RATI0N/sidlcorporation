@@ -4,6 +4,7 @@ import 'package:sidlcorporation/data/models/news_item.dart';
 import 'package:sidlcorporation/data/services/rss_service.dart';
 import 'package:sidlcorporation/ui/screens/news_detail_screen.dart';
 import 'package:sidlcorporation/ui/widgets/news_card.dart';
+import 'dart:ui';
 
 class NewsScreen extends StatefulWidget {
   const NewsScreen({Key? key}) : super(key: key);
@@ -24,9 +25,13 @@ class _NewsScreenState extends State<NewsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = CupertinoTheme.of(context).brightness == Brightness.dark;
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
-        backgroundColor: CupertinoColors.systemBackground.withOpacity(0.8),
+        backgroundColor: (isDarkMode
+            ? CupertinoColors.black
+            : CupertinoColors.systemBackground)
+            .withOpacity(0.7),
         border: null,
         middle: const Text(
           'Newsroom',

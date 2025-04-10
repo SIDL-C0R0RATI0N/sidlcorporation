@@ -43,9 +43,13 @@ class _WebViewScreenState extends State<WebViewScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = CupertinoTheme.of(context).brightness == Brightness.dark;
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
-        backgroundColor: CupertinoColors.systemBackground.withOpacity(0.8),
+        backgroundColor: (isDarkMode
+            ? CupertinoColors.black
+            : CupertinoColors.systemBackground)
+            .withOpacity(0.7),
         border: null,
         middle: Text(
           widget.title,

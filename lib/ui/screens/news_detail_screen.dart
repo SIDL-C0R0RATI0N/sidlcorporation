@@ -4,6 +4,7 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:intl/intl.dart';
 import 'package:sidlcorporation/data/models/news_item.dart';
 import 'package:sidlcorporation/ui/screens/webview_screen.dart';
+import 'dart:ui';
 
 class NewsDetailScreen extends StatelessWidget {
   final NewsItem newsItem;
@@ -15,9 +16,13 @@ class NewsDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = CupertinoTheme.of(context).brightness == Brightness.dark;
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
-        backgroundColor: CupertinoColors.systemBackground.withOpacity(0.8),
+        backgroundColor: (isDarkMode
+            ? CupertinoColors.black
+            : CupertinoColors.systemBackground)
+            .withOpacity(0.7),
         border: null,
         middle: const Text(
           'Actualité',
