@@ -1,7 +1,7 @@
 name: sidlcorporation
 description: "Application officiel de l'entreprise SIDL CORPORATION"
 publish_to: 'SIDL CORPORATION'
-version: 0.1.0+1
+version: 0.1.0+2
 
 environment:
   sdk: '>=3.0.0 <4.0.0'
@@ -18,16 +18,16 @@ dependencies:
   shared_preferences: ^2.2.0
   xml: ^6.3.0
   html: ^0.15.4
-  intl: ^0.18.1
+  intl: ^0.20.2
   flutter_html: ^3.0.0-beta.2
   flutter_native_splash: ^2.3.1
-  flutter_launcher_icons: ^0.13.1
-  package_info_plus: ^4.1.0
+  flutter_launcher_icons: ^0.14.3
+  package_info_plus: ^8.3.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^2.0.2
+  flutter_lints: ^5.0.0
 
 # Configuration Flutter
 flutter:
