@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sidlcorporation/data/models/company_info.dart';
+import 'package:sidlcorporation/ui/widgets/app_card.dart';
 
 class CompanyInfoWidget extends StatelessWidget {
   final CompanyInfo companyInfo;
@@ -30,21 +31,7 @@ class CompanyInfoWidget extends StatelessWidget {
         ),
 
         // Coordonnées de l'entreprise style App Store
-        Container(
-          margin: const EdgeInsets.only(bottom: 20),
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: CupertinoTheme.of(context).scaffoldBackgroundColor,
-            borderRadius: BorderRadius.circular(12),
-            boxShadow: [
-              BoxShadow(
-                color: CupertinoColors.systemGrey5.withOpacity(0.5),
-                spreadRadius: 1,
-                blurRadius: 5,
-                offset: const Offset(0, 2),
-              ),
-            ],
-          ),
+        AppCard(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -137,7 +124,7 @@ class CompanyInfoWidget extends StatelessWidget {
         // Titre de section pour les services
         if (companyInfo.services.isNotEmpty) ...[
           Padding(
-            padding: const EdgeInsets.only(left: 16, bottom: 12, top: 8),
+            padding: const EdgeInsets.only(left: 16, bottom: 12, top: 24),
             child: Text(
               'NOS SERVICES',
               style: TextStyle(
@@ -150,21 +137,7 @@ class CompanyInfoWidget extends StatelessWidget {
           ),
 
           // Liste des services style App Store
-          Container(
-            margin: const EdgeInsets.only(bottom: 20),
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: CupertinoTheme.of(context).scaffoldBackgroundColor,
-              borderRadius: BorderRadius.circular(12),
-              boxShadow: [
-                BoxShadow(
-                  color: CupertinoColors.systemGrey5.withOpacity(0.5),
-                  spreadRadius: 1,
-                  blurRadius: 5,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-            ),
+          AppCard(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: companyInfo.services.asMap().entries.map((entry) {

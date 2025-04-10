@@ -4,7 +4,6 @@ import 'package:sidlcorporation/data/models/news_item.dart';
 import 'package:sidlcorporation/data/services/rss_service.dart';
 import 'package:sidlcorporation/ui/screens/news_detail_screen.dart';
 import 'package:sidlcorporation/ui/widgets/news_card.dart';
-import 'dart:ui';
 
 class NewsScreen extends StatefulWidget {
   const NewsScreen({Key? key}) : super(key: key);
@@ -25,20 +24,10 @@ class _NewsScreenState extends State<NewsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isDarkMode = CupertinoTheme.of(context).brightness == Brightness.dark;
-    return CupertinoPageScaffold(
-      navigationBar: CupertinoNavigationBar(
-        backgroundColor: (isDarkMode
-            ? CupertinoColors.black
-            : CupertinoColors.systemBackground)
-            .withOpacity(0.7),
-        border: null,
-        middle: const Text(
-          'Newsroom',
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-      ),
-      child: SafeArea(
+    return SafeArea(
+      bottom: false, // Pas de marge en bas pour la tab bar personnalisée
+      child: Padding(
+        padding: const EdgeInsets.only(top: 90), // Espace pour la barre de navigation
         child: FutureBuilder<List<NewsItem>>(
           future: _newsFuture,
           builder: (context, snapshot) {
@@ -48,13 +37,23 @@ class _NewsScreenState extends State<NewsScreen> {
               );
             } else if (snapshot.hasError) {
               return Center(
-                child: Text('Erreur: ${snapshot.error}'),
+                child: Padding(
+                  padding: const EdgeInsets.all(32.0),
+                  child: Text(
+                    'Erreur: ${snapshot.error}',
+                    style: const TextStyle(color: CupertinoColors.systemRed),
+                  ),
+                ),
               );
             } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
               final news = snapshot.data!;
 
               return ListView.builder(
-                padding: const EdgeInsets.all(16.0),
+                padding: const EdgeInsets.only(
+                  left: 16.0,
+                  right: 16.0,
+                  bottom: 90.0, // Espace pour la tabbar
+                ),
                 itemCount: news.length,
                 itemBuilder: (context, index) {
                   final newsItem = news[index];
@@ -73,8 +72,34 @@ class _NewsScreenState extends State<NewsScreen> {
                 },
               );
             } else {
-              return const Center(
-                child: Text('Aucune actualité disponible'),
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(
+                      CupertinoIcons.news,
+                      size: 64,
+                      color: CupertinoColors.systemGrey,
+                    ),
+                    const SizedBox(height: 16),
+                    const Text(
+                      'Aucune actualité disponible',
+                      style: TextStyle(
+                        fontSize: 18,
+                        color: CupertinoColors.systemGrey,
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                    CupertinoButton(
+                      onPressed: () {
+                        setState(() {
+                          _newsFuture = _rssService.getNews();
+                        });
+                      },
+                      child: const Text('Actualiser'),
+                    ),
+                  ],
+                ),
               );
             }
           },

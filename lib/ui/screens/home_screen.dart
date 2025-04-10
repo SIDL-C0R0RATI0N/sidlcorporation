@@ -1,14 +1,13 @@
 import 'package:flutter/cupertino.dart';
-import 'package:provider/provider.dart';
 import 'package:sidlcorporation/config/constants.dart';
-import 'package:sidlcorporation/config/theme_provider.dart';
 import 'package:sidlcorporation/data/models/company_info.dart';
 import 'package:sidlcorporation/data/services/api_service.dart';
+import 'package:sidlcorporation/ui/common/app_scaffold.dart';
 import 'package:sidlcorporation/ui/screens/news_screen.dart';
 import 'package:sidlcorporation/ui/screens/settings_screen.dart';
 import 'package:sidlcorporation/ui/screens/webview_screen.dart';
+import 'package:sidlcorporation/ui/widgets/app_card.dart';
 import 'package:sidlcorporation/ui/widgets/company_info_widget.dart';
-import 'dart:ui';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -18,7 +17,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final ApiService _apiService = ApiService(useMock: true);
+  int _currentIndex = 0;
+  final ApiService _apiService = ApiService(useMock: false);
   late Future<CompanyInfo> _companyInfoFuture;
 
   @override
@@ -29,108 +29,81 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isDarkMode = CupertinoTheme.of(context).brightness == Brightness.dark;
-    return CupertinoTabScaffold(
-      tabBar: CupertinoTabBar(
-        // Style App Store avec effet translucide
-        backgroundColor: (isDarkMode
-            ? CupertinoColors.black
-            : CupertinoColors.systemBackground)
-            .withOpacity(0.7),
-        border: const Border(
-          top: BorderSide(
-            color: CupertinoColors.separator,
-            width: 0.5,
-          ),
-        ),
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(CupertinoIcons.home),
-            label: 'Accueil',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(CupertinoIcons.news),
-            label: 'Newsroom',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(CupertinoIcons.settings),
-            label: 'Paramètres',
-          ),
-        ],
-      ),
-      tabBuilder: (context, index) {
-        return CupertinoTabView(
-          builder: (context) {
-            switch (index) {
-              case 0:
-                return _buildHomeTab();
-              case 1:
-                return const NewsScreen();
-              case 2:
-                return const SettingsScreen();
-              default:
-                return _buildHomeTab();
-            }
-          },
-        );
+    return AppScaffold(
+      title: 'SIDL CORPORATION',
+      currentIndex: _currentIndex,
+      onTabSelected: (index) {
+        setState(() {
+          _currentIndex = index;
+        });
       },
+      trailing: _currentIndex == 0 ? CupertinoButton(
+        padding: EdgeInsets.zero,
+        onPressed: () {
+          setState(() {
+            _companyInfoFuture = _apiService.getCompanyInfo();
+          });
+        },
+        child: const Icon(
+          CupertinoIcons.refresh,
+          size: 22,
+        ),
+      ) : null,
+      body: _buildScreen(),
+    );
+  }
+
+  Widget _buildScreen() {
+    return IndexedStack(
+      index: _currentIndex,
+      children: [
+        _buildHomeTab(),
+        const NewsScreen(),
+        const SettingsScreen(),
+      ],
     );
   }
 
   Widget _buildHomeTab() {
-    final isDarkMode = CupertinoTheme.of(context).brightness == Brightness.dark;
-    return CupertinoPageScaffold(
-      // NavigationBar avec effet blur inspiré de l'App Store
-      navigationBar: CupertinoNavigationBar(
-        backgroundColor: (isDarkMode
-            ? CupertinoColors.black
-            : CupertinoColors.systemBackground)
-            .withOpacity(0.7),
-        border: null, // Retirer la bordure
-        middle: const Text(
-          'SIDL CORPORATION',
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-      ),
-      child: SafeArea(
-        child: FutureBuilder<CompanyInfo>(
-          future: _companyInfoFuture,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(
-                child: CupertinoActivityIndicator(),
-              );
-            } else if (snapshot.hasError) {
-              return Center(
-                child: Text('Erreur: ${snapshot.error}'),
-              );
-            } else if (snapshot.hasData) {
-              final companyInfo = snapshot.data!;
+    return SafeArea(
+      bottom: false, // Pas de marge en bas pour la tab bar personnalisée
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.only(top: 90, bottom: 90), // Espace pour les barres translucides
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: FutureBuilder<CompanyInfo>(
+            future: _companyInfoFuture,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(
+                  child: Padding(
+                    padding: EdgeInsets.all(32.0),
+                    child: CupertinoActivityIndicator(radius: 20),
+                  ),
+                );
+              } else if (snapshot.hasError) {
+                return Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(32.0),
+                    child: Text(
+                      'Erreur: ${snapshot.error}',
+                      style: const TextStyle(color: CupertinoColors.systemRed),
+                    ),
+                  ),
+                );
+              } else if (snapshot.hasData) {
+                final companyInfo = snapshot.data!;
 
-              return SingleChildScrollView(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
+                return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // En-tête de l'entreprise style App Store
-                    Container(
-                      margin: const EdgeInsets.only(bottom: 20),
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: CupertinoTheme.of(context).scaffoldBackgroundColor,
-                        borderRadius: BorderRadius.circular(12),
-                        boxShadow: [
-                          BoxShadow(
-                            color: CupertinoColors.systemGrey5.withOpacity(0.5),
-                            spreadRadius: 1,
-                            blurRadius: 5,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
-                      ),
+                    // En-tête de l'entreprise
+                    AppCard(
+                      useBlur: true,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          // Étiquette
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                             decoration: BoxDecoration(
@@ -147,6 +120,8 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                           ),
                           const SizedBox(height: 12),
+
+                          // Nom et description
                           Text(
                             companyInfo.name,
                             style: const TextStyle(
@@ -164,6 +139,8 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                           ),
                           const SizedBox(height: 20),
+
+                          // Bouton d'accès au site
                           CupertinoButton(
                             padding: EdgeInsets.zero,
                             onPressed: () {
@@ -177,17 +154,28 @@ class _HomeScreenState extends State<HomeScreen> {
                               );
                             },
                             child: Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                               decoration: BoxDecoration(
                                 color: CupertinoTheme.of(context).primaryColor,
                                 borderRadius: BorderRadius.circular(20),
                               ),
-                              child: const Text(
-                                'Accéder au site',
-                                style: TextStyle(
-                                  color: CupertinoColors.white,
-                                  fontWeight: FontWeight.w600,
-                                ),
+                              child: const Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    CupertinoIcons.globe,
+                                    size: 16,
+                                    color: CupertinoColors.white,
+                                  ),
+                                  SizedBox(width: 8),
+                                  Text(
+                                    'Accéder au site',
+                                    style: TextStyle(
+                                      color: CupertinoColors.white,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                           ),
@@ -195,17 +183,19 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
 
+                    const SizedBox(height: 24),
+
                     // Informations détaillées de l'entreprise
                     CompanyInfoWidget(companyInfo: companyInfo),
                   ],
-                ),
-              );
-            } else {
-              return const Center(
-                child: Text('Aucune information disponible'),
-              );
-            }
-          },
+                );
+              } else {
+                return const Center(
+                  child: Text('Aucune information disponible'),
+                );
+              }
+            },
+          ),
         ),
       ),
     );

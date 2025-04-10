@@ -56,23 +56,24 @@ class ApiService {
   }
 
   CompanyInfo _getMockCompanyInfo() {
+    print('Utilisation des données mock pour l\'entreprise');
     // Données fictives pour les tests
     return CompanyInfo(
-      name: 'N/A',
-      description: 'N/A',
+      name: 'Na/Na',
+      description: 'Na/Na',
       logo: '',
-      foundedYear: 'N/A',
-      location: 'N/A',
-      phone: 'N/A',
-      email: 'N/A',
-      website: 'N/A',
+      foundedYear: 'Na/Na',
+      location: 'Na/Na',
+      phone: 'Na/Na',
+      email: 'Na/Na',
+      website: 'Na/Na',
       services: [
-        'N/A',
-        'N/A',
-        'N/A',
-        'N/A',
-        'N/A',
-        'N/A'
+        'Na/Na',
+        'Na/Na',
+        'Na/Na',
+        'Na/Na',
+        'Na/Na',
+        'Na/Na'
       ],
     );
   }

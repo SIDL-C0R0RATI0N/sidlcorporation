@@ -15,8 +15,8 @@ class SidlApp extends StatelessWidget {
       title: 'SIDL CORPORATION',
       debugShowCheckedModeBanner: false,
       theme: themeProvider.isDarkMode
-          ? AppTheme.darkCupertinoTheme
-          : AppTheme.lightCupertinoTheme,
+          ? AppTheme.darkTheme
+          : AppTheme.lightTheme,
       home: const SplashScreen(),
     );
   }

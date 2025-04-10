@@ -1,46 +1,68 @@
 import 'package:flutter/cupertino.dart';
 
 class AppTheme {
-  // Couleurs du thème clair
-  static const Color lightPrimaryColor = CupertinoColors.systemBlue;
-  static const Color lightBackgroundColor = CupertinoColors.systemBackground;
-  static const Color lightTextColor = CupertinoColors.label;
-  static const Color lightCardColor = CupertinoColors.secondarySystemBackground;
+  // Nouvelles couleurs pour le design
+  static const Color primaryLight = Color(0xFF007AFF); // Bleu iOS
+  static const Color primaryDark = Color(0xFF0A84FF);  // Bleu iOS plus clair
 
-  // Couleurs du thème sombre
-  static const Color darkPrimaryColor = CupertinoColors.systemBlue;
-  static const Color darkBackgroundColor = CupertinoColors.black;
-  static const Color darkTextColor = CupertinoColors.white;
-  static const Color darkCardColor = Color(0xFF1C1C1E);
+  // Couleurs secondaires
+  static const Color accentLight = Color(0xFFFF9500); // Orange iOS
+  static const Color accentDark = Color(0xFFFF9F0A);  // Orange iOS plus clair
+
+  // Couleurs de fond
+  static const Color backgroundLight = CupertinoColors.systemBackground;
+  static const Color backgroundDark = Color(0xFF121212); // Fond vraiment sombre
+
+  // Couleurs de carte
+  static const Color cardLight = Color(0xFFF5F5F7);  // Gris très léger
+  static const Color cardDark = Color(0xFF1E1E1E);   // Gris très foncé
 
   // Thème clair
-  static final CupertinoThemeData lightCupertinoTheme = const CupertinoThemeData(
+  static final CupertinoThemeData lightTheme = CupertinoThemeData(
     brightness: Brightness.light,
-    primaryColor: lightPrimaryColor,
-    barBackgroundColor: lightBackgroundColor,
-    scaffoldBackgroundColor: lightBackgroundColor,
-    textTheme: CupertinoTextThemeData(
-      primaryColor: lightTextColor,
+    primaryColor: primaryLight,
+    scaffoldBackgroundColor: backgroundLight,
+    barBackgroundColor: backgroundLight.withOpacity(0.85),
+    textTheme: const CupertinoTextThemeData(
+      primaryColor: Color(0xFF000000),
       navTitleTextStyle: TextStyle(
+        color: Color(0xFF000000),
         fontSize: 17.0,
         fontWeight: FontWeight.w600,
-        color: lightTextColor,
+      ),
+      navLargeTitleTextStyle: TextStyle(
+        color: Color(0xFF000000),
+        fontSize: 34.0,
+        fontWeight: FontWeight.bold,
+      ),
+      textStyle: TextStyle(
+        color: Color(0xFF000000),
+        fontSize: 16.0,
       ),
     ),
   );
 
   // Thème sombre
-  static final CupertinoThemeData darkCupertinoTheme = const CupertinoThemeData(
+  static final CupertinoThemeData darkTheme = CupertinoThemeData(
     brightness: Brightness.dark,
-    primaryColor: darkPrimaryColor,
-    barBackgroundColor: darkBackgroundColor,
-    scaffoldBackgroundColor: darkBackgroundColor,
-    textTheme: CupertinoTextThemeData(
-      primaryColor: darkTextColor,
+    primaryColor: primaryDark,
+    scaffoldBackgroundColor: backgroundDark,
+    barBackgroundColor: backgroundDark.withOpacity(0.85),
+    textTheme: const CupertinoTextThemeData(
+      primaryColor: Color(0xFFFFFFFF),
       navTitleTextStyle: TextStyle(
+        color: Color(0xFFFFFFFF),
         fontSize: 17.0,
         fontWeight: FontWeight.w600,
-        color: darkTextColor,
+      ),
+      navLargeTitleTextStyle: TextStyle(
+        color: Color(0xFFFFFFFF),
+        fontSize: 34.0,
+        fontWeight: FontWeight.bold,
+      ),
+      textStyle: TextStyle(
+        color: Color(0xFFFFFFFF),
+        fontSize: 16.0,
       ),
     ),
   );

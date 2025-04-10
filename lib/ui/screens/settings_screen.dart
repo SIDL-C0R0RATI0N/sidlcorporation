@@ -1,106 +1,137 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sidlcorporation/config/theme_provider.dart';
+import 'package:sidlcorporation/ui/widgets/app_card.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'dart:ui';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final isDarkMode = CupertinoTheme.of(context).brightness == Brightness.dark;
     final themeProvider = Provider.of<ThemeProvider>(context);
 
-    return CupertinoPageScaffold(
-      navigationBar: CupertinoNavigationBar(
-        backgroundColor: (isDarkMode
-            ? CupertinoColors.black
-            : CupertinoColors.systemBackground)
-            .withOpacity(0.7),
-        border: null,
-        middle: const Text(
-          'Paramètres',
-          style: TextStyle(fontWeight: FontWeight.bold),
+    return SafeArea(
+      bottom: false, // Pas de marge en bas pour la tab bar personnalisée
+      child: ListView(
+        padding: const EdgeInsets.only(
+          left: 16,
+          right: 16,
+          top: 90, // Espace pour la barre de navigation
+          bottom: 90, // Espace pour la barre de menu
         ),
-      ),
-      child: SafeArea(
-        child: ListView(
-          children: [
-            const SizedBox(height: 16),
-
-            // Section Apparence
-            _buildSectionHeader(context, 'Apparence'),
-            _buildToggleSetting(
-              context,
-              icon: CupertinoIcons.moon_stars_fill,
-              title: 'Mode sombre',
-              value: themeProvider.isDarkMode,
-              onChanged: (value) => themeProvider.toggleTheme(),
-            ),
-
-            // Section Informations
-            _buildSectionHeader(context, 'Informations'),
-            _buildSettingsItem(
-              context,
-              icon: CupertinoIcons.info_circle_fill,
-              title: 'À propos de l\'application',
-              onTap: () => _showAboutDialog(context),
-            ),
-            _buildSettingsItem(
-              context,
-              icon: CupertinoIcons.doc_text_fill,
-              title: 'Mentions légales',
-              onTap: () => _openLegalPage(context),
-            ),
-            _buildSettingsItem(
-              context,
-              icon: CupertinoIcons.lock_fill,
-              title: 'Politique de confidentialité',
-              onTap: () => _openPrivacyPage(context),
-            ),
-
-            // Section Support
-            _buildSectionHeader(context, 'Support'),
-            _buildSettingsItem(
-              context,
-              icon: CupertinoIcons.chat_bubble_2_fill,
-              title: 'Contacter le support',
-              onTap: () => _contactSupport(),
-            ),
-            _buildSettingsItem(
-              context,
-              icon: CupertinoIcons.star_fill,
-              title: 'Noter l\'application',
-              onTap: () => _rateApp(),
-            ),
-
-            // Version
-            const SizedBox(height: 40),
-            const Center(
-              child: Text(
-                'Version 1.0.0',
-                style: TextStyle(
-                  fontSize: 13,
-                  color: CupertinoColors.systemGrey,
+        children: [
+          // Section Apparence
+          _buildSectionHeader(context, 'Apparence'),
+          AppCard(
+            padding: EdgeInsets.zero,
+            child: Column(
+              children: [
+                _buildToggleSetting(
+                  context,
+                  icon: CupertinoIcons.moon_stars_fill,
+                  title: 'Mode sombre',
+                  value: themeProvider.isDarkMode,
+                  onChanged: (value) => themeProvider.toggleTheme(),
                 ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 24),
+
+          // Section Informations
+          _buildSectionHeader(context, 'Informations'),
+          AppCard(
+            padding: EdgeInsets.zero,
+            child: Column(
+              children: [
+                _buildSettingsItem(
+                  context,
+                  icon: CupertinoIcons.info_circle_fill,
+                  title: 'À propos de l\'application',
+                  onTap: () => _showAboutDialog(context),
+                ),
+                const Divider(height: 1, indent: 54),
+                _buildSettingsItem(
+                  context,
+                  icon: CupertinoIcons.doc_text_fill,
+                  title: 'Mentions légales',
+                  onTap: () => _openLegalPage(context),
+                ),
+                const Divider(height: 1, indent: 54),
+                _buildSettingsItem(
+                  context,
+                  icon: CupertinoIcons.lock_fill,
+                  title: 'Politique de confidentialité',
+                  onTap: () => _openPrivacyPage(context),
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 24),
+
+          // Section Support
+          _buildSectionHeader(context, 'Support'),
+          AppCard(
+            padding: EdgeInsets.zero,
+            child: Column(
+              children: [
+                _buildSettingsItem(
+                  context,
+                  icon: CupertinoIcons.chat_bubble_2_fill,
+                  title: 'Contacter le support',
+                  onTap: () => _contactSupport(),
+                ),
+                const Divider(height: 1, indent: 54),
+                _buildSettingsItem(
+                  context,
+                  icon: CupertinoIcons.star_fill,
+                  title: 'Noter l\'application',
+                  onTap: () => _rateApp(),
+                ),
+              ],
+            ),
+          ),
+
+          // Version
+          const SizedBox(height: 40),
+          const Center(
+            child: Text(
+              'Version 1.0.0',
+              style: TextStyle(
+                fontSize: 13,
+                color: CupertinoColors.systemGrey,
               ),
             ),
-            const SizedBox(height: 20),
-          ],
-        ),
+          ),
+          const SizedBox(height: 20),
+
+          // Crédits
+          Center(
+            child: Text(
+              '© 2025 SIDL CORPORATION',
+              style: TextStyle(
+                fontSize: 12,
+                color: CupertinoColors.systemGrey,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
 
   Widget _buildSectionHeader(BuildContext context, String title) {
     return Padding(
-      padding: const EdgeInsets.only(left: 16, top: 16, bottom: 8),
+      padding: const EdgeInsets.only(left: 16, bottom: 12),
       child: Text(
         title.toUpperCase(),
         style: TextStyle(
-          fontSize: 13,
-          fontWeight: FontWeight.w600,
+          fontSize: 14,
+          fontWeight: FontWeight.bold,
           color: CupertinoTheme.of(context).primaryColor,
           letterSpacing: 0.5,
         ),
@@ -119,20 +150,11 @@ class SettingsScreen extends StatelessWidget {
       onPressed: onTap ?? () {},
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        decoration: BoxDecoration(
-          border: Border(
-            bottom: BorderSide(
-              color: CupertinoTheme.of(context).brightness == Brightness.dark
-                  ? const Color(0xFF38383A)
-                  : CupertinoColors.separator,
-              width: 0.5,
-            ),
-          ),
-        ),
         child: Row(
           children: [
             Container(
-              padding: const EdgeInsets.all(6),
+              width: 36,
+              height: 36,
               decoration: BoxDecoration(
                 color: CupertinoTheme.of(context).primaryColor.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(8),
@@ -170,20 +192,11 @@ class SettingsScreen extends StatelessWidget {
       }) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      decoration: BoxDecoration(
-        border: Border(
-          bottom: BorderSide(
-            color: CupertinoTheme.of(context).brightness == Brightness.dark
-                ? const Color(0xFF38383A)
-                : CupertinoColors.separator,
-            width: 0.5,
-          ),
-        ),
-      ),
       child: Row(
         children: [
           Container(
-            padding: const EdgeInsets.all(6),
+            width: 36,
+            height: 36,
             decoration: BoxDecoration(
               color: CupertinoTheme.of(context).primaryColor.withOpacity(0.1),
               borderRadius: BorderRadius.circular(8),
@@ -308,6 +321,8 @@ class SettingsScreen extends StatelessWidget {
   Future<void> _launchUrl(Uri url) async {
     if (await canLaunchUrl(url)) {
       await launchUrl(url);
+    } else {
+      print('Impossible d\'ouvrir l\'URL: $url');
     }
   }
 }

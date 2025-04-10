@@ -1,4 +1,3 @@
-// ui/widgets/news_card.dart
 import 'package:flutter/cupertino.dart';
 
 class NewsCard extends StatelessWidget {
@@ -21,124 +20,130 @@ class NewsCard extends StatelessWidget {
       onTap: onTap,
       child: Container(
         margin: const EdgeInsets.only(bottom: 16.0),
+        clipBehavior: Clip.antiAlias, // Pour s'assurer que l'image respecte les coins arrondis
         decoration: BoxDecoration(
-          color: CupertinoTheme.of(context).scaffoldBackgroundColor,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: CupertinoColors.systemGrey5.withOpacity(0.5),
-              spreadRadius: 1,
-              blurRadius: 5,
-              offset: const Offset(0, 2),
+              color: CupertinoColors.black.withOpacity(0.1),
+              blurRadius: 10,
+              offset: const Offset(0, 5),
             ),
           ],
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: Stack(
           children: [
-            // Image avec coins arrondis
+            // Image d'arrière-plan
             if (imageUrl.isNotEmpty)
-              ClipRRect(
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(12),
-                  topRight: Radius.circular(12),
-                ),
-                child: Image.network(
-                  imageUrl,
-                  height: 200,
-                  width: double.infinity,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Container(
-                      height: 200,
-                      width: double.infinity,
-                      color: CupertinoColors.systemGrey6,
-                      child: const Center(
-                        child: Icon(
-                          CupertinoIcons.photo,
-                          size: 50,
-                          color: CupertinoColors.systemGrey2,
-                        ),
+              Image.network(
+                imageUrl,
+                height: 200,
+                width: double.infinity,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return Container(
+                    height: 200,
+                    width: double.infinity,
+                    color: CupertinoColors.systemGrey6,
+                    child: const Center(
+                      child: Icon(
+                        CupertinoIcons.photo,
+                        size: 50,
+                        color: CupertinoColors.systemGrey2,
                       ),
-                    );
-                  },
-                ),
+                    ),
+                  );
+                },
               ),
 
-            // Contenu avec style App Store
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Étiquette Today en haut comme dans App Store
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: CupertinoTheme.of(context).primaryColor,
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                    child: const Text(
-                      'ACTUALITÉ',
-                      style: TextStyle(
-                        fontSize: 10,
-                        fontWeight: FontWeight.bold,
-                        color: CupertinoColors.white,
+            // Dégradé pour assurer la lisibilité du texte
+            Container(
+              height: 200,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    CupertinoColors.black.withOpacity(0.1),
+                    CupertinoColors.black.withOpacity(0.6),
+                  ],
+                ),
+              ),
+            ),
+
+            // Contenu (titre, date, etc.)
+            Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Étiquette
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: CupertinoTheme.of(context).primaryColor,
+                        borderRadius: BorderRadius.circular(4),
                       ),
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-
-                  // Titre de l'article
-                  Text(
-                    title,
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: -0.5,
-                      height: 1.2,
-                    ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 8),
-
-                  // Date de publication
-                  Text(
-                    date,
-                    style: const TextStyle(
-                      fontSize: 14,
-                      color: CupertinoColors.systemGrey,
-                    ),
-                  ),
-
-                  const SizedBox(height: 12),
-
-                  // Bouton de lecture
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      CupertinoButton(
-                        padding: EdgeInsets.zero,
-                        onPressed: onTap,
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                          decoration: BoxDecoration(
-                            color: CupertinoTheme.of(context).primaryColor,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: const Text(
-                            'Lire',
-                            style: TextStyle(
-                              color: CupertinoColors.white,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
+                      child: const Text(
+                        'ACTUALITÉ',
+                        style: TextStyle(
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                          color: CupertinoColors.white,
                         ),
                       ),
-                    ],
-                  ),
-                ],
+                    ),
+                    const SizedBox(height: 8),
+
+                    // Titre
+                    Text(
+                      title,
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: CupertinoColors.white,
+                        shadows: [
+                          Shadow(
+                            color: CupertinoColors.black,
+                            blurRadius: 2,
+                          ),
+                        ],
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 4),
+
+                    // Date
+                    Row(
+                      children: [
+                        const Icon(
+                          CupertinoIcons.calendar,
+                          size: 14,
+                          color: CupertinoColors.white,
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          date,
+                          style: const TextStyle(
+                            fontSize: 12,
+                            color: CupertinoColors.white,
+                            shadows: [
+                              Shadow(
+                                color: CupertinoColors.black,
+                                blurRadius: 2,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
           ],
