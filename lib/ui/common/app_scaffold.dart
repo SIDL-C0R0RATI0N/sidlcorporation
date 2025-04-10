@@ -54,7 +54,7 @@ class AppScaffold extends StatelessWidget {
         filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
         child: Container(
           height: 90, // Hauteur incluant la zone de statut
-          padding: const EdgeInsets.only(top: 44, left: 16, right: 16), // Espace pour la zone de statut
+          padding: const EdgeInsets.only(top: 60, left: 16, right: 16), // Espace pour la zone de statut
           decoration: BoxDecoration(
             color: (isDarkMode
                 ? CupertinoColors.black
@@ -77,7 +77,7 @@ class AppScaffold extends StatelessWidget {
               Text(
                 title,
                 style: TextStyle(
-                  fontSize: 17,
+                  fontSize: 20,
                   fontWeight: FontWeight.bold,
                   color: CupertinoTheme.of(context).textTheme.textStyle.color,
                 ),

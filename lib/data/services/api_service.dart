@@ -57,7 +57,7 @@ class ApiService {
 
   CompanyInfo _getMockCompanyInfo() {
     print('Utilisation des données mock pour l\'entreprise');
-    // Données fictives pour les tests
+    // Données fictives pour les tests avec les nouvelles informations légales
     return CompanyInfo(
       name: 'Na/Na',
       description: 'Na/Na',
@@ -69,12 +69,12 @@ class ApiService {
       website: 'Na/Na',
       services: [
         'Na/Na',
-        'Na/Na',
-        'Na/Na',
-        'Na/Na',
-        'Na/Na',
-        'Na/Na'
       ],
+      // Ajout des informations légales fictives
+      siret: 'Na/Na',
+      apeCode: 'Na/Na',
+      vatNumber: 'Na/Na',
+      dunsNumber: 'Na/Na',
     );
   }
 }

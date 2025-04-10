@@ -4,9 +4,35 @@ import 'package:provider/provider.dart';
 import 'package:sidlcorporation/config/theme_provider.dart';
 import 'package:sidlcorporation/ui/widgets/app_card.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
-class SettingsScreen extends StatelessWidget {
+class SettingsScreen extends StatefulWidget {
   const SettingsScreen({Key? key}) : super(key: key);
+
+  @override
+  State<SettingsScreen> createState() => _SettingsScreenState();
+}
+
+class _SettingsScreenState extends State<SettingsScreen> {
+  String _version = '1.0.0';
+
+  @override
+  void initState() {
+    super.initState();
+    _getAppVersion();
+  }
+
+  Future<void> _getAppVersion() async {
+    try {
+      final PackageInfo packageInfo = await PackageInfo.fromPlatform();
+      setState(() {
+        _version = '${packageInfo.version} (${packageInfo.buildNumber})';
+      });
+    } catch (e) {
+      print('Erreur lors de la récupération de la version: $e');
+      // Conserver la version par défaut si erreur
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -96,12 +122,12 @@ class SettingsScreen extends StatelessWidget {
             ),
           ),
 
-          // Version
+          // Version - Maintenant dynamique
           const SizedBox(height: 40),
-          const Center(
+          Center(
             child: Text(
-              'Version 1.0.0',
-              style: TextStyle(
+              'Version $_version',
+              style: const TextStyle(
                 fontSize: 13,
                 color: CupertinoColors.systemGrey,
               ),
@@ -259,9 +285,9 @@ class SettingsScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 8),
-            const Text(
-              'Version 1.0.0',
-              style: TextStyle(
+            Text(
+              'Version $_version',
+              style: const TextStyle(
                 fontSize: 14,
                 color: CupertinoColors.systemGrey,
               ),
@@ -296,13 +322,13 @@ class SettingsScreen extends StatelessWidget {
 
   void _openLegalPage(BuildContext context) {
     // URL des mentions légales
-    final url = Uri.parse('https://www.sidl-corporation.fr/mentions-legales');
+    final url = Uri.parse('https://www.sidl-corporation.fr/legal-notice');
     _launchUrl(url);
   }
 
   void _openPrivacyPage(BuildContext context) {
     // URL de la politique de confidentialité
-    final url = Uri.parse('https://www.sidl-corporation.fr/confidentialite');
+    final url = Uri.parse('https://www.sidl-corporation.fr/privacy-policy');
     _launchUrl(url);
   }
 

@@ -1,5 +1,5 @@
 # SIDL CORPORATION (iOS)
-Version : 0.0.1 (alpha 13)</br>
+Version : 0.1.0 (beta 1)</br>
 Développé par : [SIDL CORPORATION](https://www.sidl-corporation.fr/)</br>
 Site internet : [VOIR LE SITE](https://www.sidl-corporation.fr/)</br>
 Hébergeur : [HOST BY SIDL CORPORATION](https://www.host-by-sidlcorporation.fr/)</br>
@@ -7,7 +7,7 @@ Hébergeur : [HOST BY SIDL CORPORATION](https://www.host-by-sidlcorporation.fr/)
 # Autres informations
 > Les badges ci-dessous indique les infos "_Version Web_", "_Version iOS_", "_Status CodeMagic_", "_Status du site_"
 
-[![Version Web](https://img.shields.io/badge/dynamic/json?url=https://raw.githubusercontent.com/SIDL-C0R0RATI0N/sidlcorporation/0.0.1-alpha-5/package.json&query=$.version_web&label=Web&color=orange)](https://github.com/SIDL-C0R0RATI0N/sidlcorporation) [![Version iOS](https://img.shields.io/badge/dynamic/json?url=https://raw.githubusercontent.com/SIDL-C0R0RATI0N/sidlcorporation/0.0.1-alpha-5/package.json&query=$.version_ios&label=iOS&color=blue)](https://github.com/SIDL-C0R0RATI0N/sidlcorporation) [![Codemagic build status](https://api.codemagic.io/apps/67e95ae95ee84b50fa27c3ae/67e95ae95ee84b50fa27c3ad/status_badge.svg)](https://codemagic.io/app/67e95ae95ee84b50fa27c3ae/67e95ae95ee84b50fa27c3ad/latest_build) ![Website](https://img.shields.io/website?url=https%3A%2F%2Fwww.sidl-corporation.fr%2F)
+[![Version Web](https://img.shields.io/badge/dynamic/json?url=https://raw.githubusercontent.com/SIDL-C0R0RATI0N/sidlcorporation/0.1.0-beta-1/package.json&query=$.version_web&label=Web&color=orange)](https://github.com/SIDL-C0R0RATI0N/sidlcorporation) [![Version iOS](https://img.shields.io/badge/dynamic/json?url=https://raw.githubusercontent.com/SIDL-C0R0RATI0N/sidlcorporation/0.1.0-beta-1/package.json&query=$.version_ios&label=iOS&color=blue)](https://github.com/SIDL-C0R0RATI0N/sidlcorporation) [![Codemagic build status](https://api.codemagic.io/apps/67e95ae95ee84b50fa27c3ae/67e95ae95ee84b50fa27c3ad/status_badge.svg)](https://codemagic.io/app/67e95ae95ee84b50fa27c3ae/67e95ae95ee84b50fa27c3ad/latest_build) ![Website](https://img.shields.io/website?url=https%3A%2F%2Fwww.sidl-corporation.fr%2F)
 
 # Description
 SIDL CORPORATION est une entreprise spécialisée dans la programmation informatique, l'hébergement web et le développement de solutions sur mesure pour entreprises et particuliers. L'application SIDL CORPORATION vous offre un accès facile à nos services, incluant l'hébergement web, le support client, et des informations sur nos produits et offres.

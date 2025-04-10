@@ -183,7 +183,14 @@ class NewsDetailScreen extends StatelessWidget {
                             ),
                           );
                         },
-                        child: const Text('Lire l\'article complet'),
+                        // Assurez-vous que le texte est toujours blanc, quelle que soit le thème
+                        child: const Text(
+                          'Lire l\'article complet',
+                          style: TextStyle(
+                            color: CupertinoColors.white,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
                       ),
                     ),
                   ],
@@ -202,19 +209,27 @@ class NewsDetailScreen extends StatelessWidget {
         .replaceAll(RegExp(r'<[^>]*>'), '') // Supprime les balises HTML
         .replaceAll('&nbsp;', ' ')         // Remplace les espaces insécables
         .replaceAll(RegExp(r'\s+'), ' ')   // Remplace les espaces multiples
-        .trim();                          // Supprime les espaces au début et à la fin
+        .trim();                         // Supprime les espaces au début et à la fin
 
     // Limiter à un aperçu
     if (plainText.length > 500) {
       plainText = plainText.substring(0, 500) + '...';
     }
 
-    return Text(
-      plainText,
-      style: const TextStyle(
-        fontSize: 16,
-        height: 1.5,
-      ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          plainText,
+          style: const TextStyle(
+            fontSize: 16,
+            height: 1.5,
+          ),
+        ),
+
+        // Ajouter de l'espace après le texte pour éviter la partie vide
+        const SizedBox(height: 20),
+      ],
     );
   }
 }
