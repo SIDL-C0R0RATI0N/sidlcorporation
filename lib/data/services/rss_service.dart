@@ -29,7 +29,7 @@ class RssService {
           final pubDate = _parseDate(pubDateString);
 
           // Contenu
-          final content = _getElementText(item, 'content:encoded');
+          final content = _cleanContentHtml(_getElementText(item, 'content:encoded'));
 
           // Image
           final description = _getElementText(item, 'description');
@@ -55,7 +55,16 @@ class RssService {
 
   String _getElementText(XmlElement item, String elementName) {
     final elements = item.findElements(elementName);
-    return elements.isNotEmpty ? elements.first.innerText : '';
+    if (elements.isNotEmpty) {
+      // Nettoyer le contenu en retirant les CDATA si nécessaire
+      String content = elements.first.innerText;
+      // La balise CDATA peut être présente dans les flux RSS WordPress
+      if (content.startsWith('<![CDATA[') && content.endsWith(']]>')) {
+        content = content.substring(9, content.length - 3);
+      }
+      return content;
+    }
+    return '';
   }
 
   DateTime _parseDate(String dateString) {
@@ -64,6 +73,19 @@ class RssService {
     } catch (e) {
       return DateTime.now();
     }
+  }
+
+  String _cleanContentHtml(String html) {
+    if (html.isEmpty) return '';
+
+    // Nettoyer les scripts et styles inutiles qui pourraient causer des problèmes
+    html = html.replaceAll(RegExp(r'<script[^>]*>.*?</script>', dotAll: true), '');
+    html = html.replaceAll(RegExp(r'<style[^>]*>.*?</style>', dotAll: true), '');
+
+    // Corriger les problèmes d'images relatives
+    html = html.replaceAll('src="//', 'src="https://');
+
+    return html;
   }
 
   String _extractImageFromDescription(String description) {

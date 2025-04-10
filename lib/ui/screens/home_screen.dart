@@ -7,7 +7,6 @@ import 'package:sidlcorporation/data/services/api_service.dart';
 import 'package:sidlcorporation/ui/screens/news_screen.dart';
 import 'package:sidlcorporation/ui/screens/settings_screen.dart';
 import 'package:sidlcorporation/ui/screens/webview_screen.dart';
-import 'package:sidlcorporation/ui/widgets/blur_card.dart';
 import 'package:sidlcorporation/ui/widgets/company_info_widget.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -18,8 +17,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  int _currentIndex = 0;
-  final ApiService _apiService = ApiService();
+  final ApiService _apiService = ApiService(useMock: true);
   late Future<CompanyInfo> _companyInfoFuture;
 
   @override
@@ -32,6 +30,14 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return CupertinoTabScaffold(
       tabBar: CupertinoTabBar(
+        // Style App Store avec effet translucide
+        backgroundColor: CupertinoColors.systemBackground.withOpacity(0.8),
+        border: const Border(
+          top: BorderSide(
+            color: CupertinoColors.separator,
+            width: 0.5,
+          ),
+        ),
         items: const [
           BottomNavigationBarItem(
             icon: Icon(CupertinoIcons.home),
@@ -68,8 +74,14 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildHomeTab() {
     return CupertinoPageScaffold(
-      navigationBar: const CupertinoNavigationBar(
-        middle: Text('SIDL CORPORATION'),
+      // NavigationBar avec effet blur inspiré de l'App Store
+      navigationBar: CupertinoNavigationBar(
+        backgroundColor: CupertinoColors.systemBackground.withOpacity(0.8),
+        border: null, // Retirer la bordure
+        middle: const Text(
+          'SIDL CORPORATION',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
       ),
       child: SafeArea(
         child: FutureBuilder<CompanyInfo>(
@@ -91,48 +103,88 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // En-tête avec effet blur
-                    BlurCard(
-                      child: Padding(
-                        padding: const EdgeInsets.all(20.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              companyInfo.name,
-                              style: const TextStyle(
-                                fontSize: 24,
+                    // En-tête de l'entreprise style App Store
+                    Container(
+                      margin: const EdgeInsets.only(bottom: 20),
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: CupertinoTheme.of(context).scaffoldBackgroundColor,
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            color: CupertinoColors.systemGrey5.withOpacity(0.5),
+                            spreadRadius: 1,
+                            blurRadius: 5,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: CupertinoTheme.of(context).primaryColor,
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: const Text(
+                              'BIENVENUE',
+                              style: TextStyle(
+                                fontSize: 10,
                                 fontWeight: FontWeight.bold,
+                                color: CupertinoColors.white,
                               ),
                             ),
-                            const SizedBox(height: 8),
-                            Text(
-                              companyInfo.description,
-                              style: const TextStyle(
-                                fontSize: 16,
-                              ),
+                          ),
+                          const SizedBox(height: 12),
+                          Text(
+                            companyInfo.name,
+                            style: const TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: -0.5,
                             ),
-                            const SizedBox(height: 20),
-                            CupertinoButton.filled(
-                              padding: const EdgeInsets.symmetric(horizontal: 24),
-                              onPressed: () {
-                                Navigator.of(context).push(
-                                  CupertinoPageRoute(
-                                    builder: (context) => const WebViewScreen(
-                                      url: AppConstants.websiteUrl,
-                                      title: 'SIDL CORPORATION',
-                                    ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            companyInfo.description,
+                            style: const TextStyle(
+                              fontSize: 16,
+                              height: 1.4,
+                            ),
+                          ),
+                          const SizedBox(height: 20),
+                          CupertinoButton(
+                            padding: EdgeInsets.zero,
+                            onPressed: () {
+                              Navigator.of(context).push(
+                                CupertinoPageRoute(
+                                  builder: (context) => const WebViewScreen(
+                                    url: AppConstants.websiteUrl,
+                                    title: 'SIDL CORPORATION',
                                   ),
-                                );
-                              },
-                              child: const Text('Accéder au site'),
+                                ),
+                              );
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                              decoration: BoxDecoration(
+                                color: CupertinoTheme.of(context).primaryColor,
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: const Text(
+                                'Accéder au site',
+                                style: TextStyle(
+                                  color: CupertinoColors.white,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     ),
-
-                    const SizedBox(height: 24),
 
                     // Informations détaillées de l'entreprise
                     CompanyInfoWidget(companyInfo: companyInfo),

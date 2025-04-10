@@ -4,9 +4,19 @@ import 'package:sidlcorporation/config/constants.dart';
 import 'package:sidlcorporation/data/models/company_info.dart';
 
 class ApiService {
+  final bool useMock;
+
+  ApiService({this.useMock = true});
+
   Future<CompanyInfo> getCompanyInfo() async {
+    if (useMock) {
+      // Simuler un délai réseau
+      await Future.delayed(const Duration(milliseconds: 800));
+      return _getMockCompanyInfo();
+    }
+
     try {
-      final response = await http.get(Uri.parse('${AppConstants.apiBaseUrl}company-info'));
+      final response = await http.get(Uri.parse(AppConstants.apiBaseUrl));
 
       if (response.statusCode == 200) {
         return CompanyInfo.fromJson(json.decode(response.body));
@@ -15,22 +25,29 @@ class ApiService {
       }
     } catch (e) {
       // En cas d'erreur, retourner des données par défaut
-      return CompanyInfo(
-        name: 'SIDL CORPORATION',
-        description: 'Une entreprise innovante dans le domaine technologique.',
-        logo: '',
-        foundedYear: '2020',
-        location: 'Paris, France',
-        phone: '+33 1 23 45 67 89',
-        email: 'contact@sidl-corporation.fr',
-        website: 'https://www.sidl-corporation.fr',
-        services: [
-          'Développement logiciel',
-          'Conseil en technologie',
-          'Services cloud',
-          'Intelligence artificielle'
-        ],
-      );
+      return _getMockCompanyInfo();
     }
+  }
+
+  CompanyInfo _getMockCompanyInfo() {
+    // Données fictives pour les tests
+    return CompanyInfo(
+      name: 'N/A',
+      description: 'N/A',
+      logo: '',
+      foundedYear: 'N/A',
+      location: 'N/A',
+      phone: 'N/A',
+      email: 'N/A',
+      website: 'N/A',
+      services: [
+        'N/A',
+        'N/A',
+        'N/A',
+        'N/A',
+        'N/A',
+        'N/A'
+      ],
+    );
   }
 }

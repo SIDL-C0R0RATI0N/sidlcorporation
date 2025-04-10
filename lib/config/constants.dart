@@ -1,6 +1,6 @@
 class AppConstants {
   // URLs
-  static const String apiBaseUrl = 'https://api.sidl-corporation.fr/v5/app/ios/';
+  static const String apiBaseUrl = 'https://api.sidl-corporation.fr/v5/app/ios/company-info.php';
   static const String websiteUrl = 'https://www.sidl-corporation.fr/';
   static const String rssFeedUrl = 'https://www.sidl-corporation.fr/feed';
 

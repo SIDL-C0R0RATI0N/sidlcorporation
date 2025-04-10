@@ -11,8 +11,13 @@ class SettingsScreen extends StatelessWidget {
     final themeProvider = Provider.of<ThemeProvider>(context);
 
     return CupertinoPageScaffold(
-      navigationBar: const CupertinoNavigationBar(
-        middle: Text('Paramètres'),
+      navigationBar: CupertinoNavigationBar(
+        backgroundColor: CupertinoColors.systemBackground.withOpacity(0.8),
+        border: null,
+        middle: const Text(
+          'Paramètres',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
       ),
       child: SafeArea(
         child: ListView(
@@ -92,6 +97,7 @@ class SettingsScreen extends StatelessWidget {
           fontSize: 13,
           fontWeight: FontWeight.w600,
           color: CupertinoTheme.of(context).primaryColor,
+          letterSpacing: 0.5,
         ),
       ),
     );

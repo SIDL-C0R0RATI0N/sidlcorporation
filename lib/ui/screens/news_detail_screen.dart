@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:intl/intl.dart';
 import 'package:sidlcorporation/data/models/news_item.dart';
@@ -16,7 +17,12 @@ class NewsDetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
-        middle: const Text('Actualité'),
+        backgroundColor: CupertinoColors.systemBackground.withOpacity(0.8),
+        border: null,
+        middle: const Text(
+          'Actualité',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
         trailing: CupertinoButton(
           padding: EdgeInsets.zero,
           onPressed: () {
@@ -90,7 +96,7 @@ class NewsDetailScreen extends StatelessWidget {
                   ),
                   const SizedBox(width: 4),
                   Text(
-                    DateFormat('dd MMMM yyyy', 'fr_FR').format(newsItem.pubDate),
+                    DateFormat('dd/MM/yyyy').format(newsItem.pubDate),
                     style: const TextStyle(
                       color: CupertinoColors.systemGrey,
                       fontSize: 14,
@@ -117,35 +123,61 @@ class NewsDetailScreen extends StatelessWidget {
               ),
 
               const SizedBox(height: 24),
+              const Divider(),
+              const SizedBox(height: 16),
 
-              // Contenu
-              Html(
-                data: newsItem.content,
-                style: {
-                  "body": Style(
-                    fontSize: FontSize(16.0),
-                    lineHeight: LineHeight(1.6),
-                  ),
-                  "h1": Style(
-                    fontSize: FontSize(22.0),
-                    fontWeight: FontWeight.bold,
-                  ),
-                  "h2": Style(
-                    fontSize: FontSize(20.0),
-                    fontWeight: FontWeight.bold,
-                  ),
-                  "p": Style(
-                    margin: Margins.only(bottom: 16),
-                  ),
-                  "a": Style(
-                    color: CupertinoTheme.of(context).primaryColor,
-                  ),
-                },
+              // Test pour vérifier si le contenu s'affiche
+              Text(
+                "Aperçu du contenu:",
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: CupertinoTheme.of(context).primaryColor,
+                ),
+              ),
+              const SizedBox(height: 8),
+
+              // Affichage d'un extrait du contenu en texte brut
+              Text(
+                _cleanHtmlContent(newsItem.content).substring(0,
+                    _cleanHtmlContent(newsItem.content).length > 200
+                        ? 200
+                        : _cleanHtmlContent(newsItem.content).length) + "...",
+                style: const TextStyle(fontSize: 16),
+              ),
+
+              const SizedBox(height: 16),
+
+              // Bouton pour voir l'article complet
+              Center(
+                child: CupertinoButton.filled(
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      CupertinoPageRoute(
+                        builder: (context) => WebViewScreen(
+                          url: newsItem.link,
+                          title: 'Article',
+                        ),
+                      ),
+                    );
+                  },
+                  child: const Text('Voir l\'article complet'),
+                ),
               ),
             ],
           ),
         ),
       ),
     );
+  }
+
+  // Fonction pour nettoyer le contenu HTML
+  String _cleanHtmlContent(String htmlContent) {
+    // Supprimer les balises HTML pour obtenir du texte brut
+    return htmlContent
+        .replaceAll(RegExp(r'<[^>]*>'), '') // Supprime les balises HTML
+        .replaceAll('&nbsp;', ' ')         // Remplace les espaces insécables
+        .replaceAll(RegExp(r'\s+'), ' ')   // Remplace les espaces multiples par un seul
+        .trim();                           // Supprime les espaces au début et à la fin
   }
 }

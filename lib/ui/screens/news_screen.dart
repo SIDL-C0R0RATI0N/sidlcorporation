@@ -25,8 +25,13 @@ class _NewsScreenState extends State<NewsScreen> {
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
-      navigationBar: const CupertinoNavigationBar(
-        middle: Text('Newsroom'),
+      navigationBar: CupertinoNavigationBar(
+        backgroundColor: CupertinoColors.systemBackground.withOpacity(0.8),
+        border: null,
+        middle: const Text(
+          'Newsroom',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
       ),
       child: SafeArea(
         child: FutureBuilder<List<NewsItem>>(

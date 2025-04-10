@@ -13,6 +13,12 @@ void main() async {
     DeviceOrientation.portraitDown,
   ]);
 
+  // Assurer que la barre de statut est visible
+  SystemChrome.setEnabledSystemUIMode(
+    SystemUiMode.edgeToEdge,
+    overlays: [SystemUiOverlay.top, SystemUiOverlay.bottom],
+  );
+
   runApp(
     ChangeNotifierProvider(
       create: (context) => ThemeProvider(),

@@ -45,7 +45,12 @@ class _WebViewScreenState extends State<WebViewScreen> {
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
-        middle: Text(widget.title),
+        backgroundColor: CupertinoColors.systemBackground.withOpacity(0.8),
+        border: null,
+        middle: Text(
+          widget.title,
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ),
         trailing: CupertinoButton(
           padding: EdgeInsets.zero,
           onPressed: () => _controller.reload(),
