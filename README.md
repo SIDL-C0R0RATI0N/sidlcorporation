@@ -1,5 +1,5 @@
 # SIDL CORPORATION (iOS)
-Version : 0.1.0 (beta 1)</br>
+Version : 0.1.0 (beta 2)</br>
 Développé par : [SIDL CORPORATION](https://www.sidl-corporation.fr/)</br>
 Site internet : [VOIR LE SITE](https://www.sidl-corporation.fr/)</br>
 Hébergeur : [HOST BY SIDL CORPORATION](https://www.host-by-sidlcorporation.fr/)</br>
