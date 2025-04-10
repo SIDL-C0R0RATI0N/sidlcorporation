@@ -49,17 +49,26 @@ class AppScaffold extends StatelessWidget {
   }
 
   Widget _buildBlurredNavBar(BuildContext context, bool isDarkMode) {
+    // Obtenir la taille du padding de la barre d'état de manière dynamique
+    final statusBarHeight = MediaQuery.of(context).padding.top;
+
     return ClipRect(
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
         child: Container(
-          height: 90, // Hauteur incluant la zone de statut
-          padding: const EdgeInsets.only(top: 60, left: 16, right: 16), // Espace pour la zone de statut
+          // Hauteur augmentée et dynamique basée sur la barre d'état
+          height: statusBarHeight + 55, // 55px pour la barre de navigation + hauteur de la barre d'état
+          padding: EdgeInsets.only(
+            top: statusBarHeight, // Padding dynamique basé sur la hauteur de la barre d'état
+            left: 16,
+            right: 16,
+            bottom: 10, // Padding en bas pour centrer verticalement le contenu
+          ),
           decoration: BoxDecoration(
             color: (isDarkMode
                 ? CupertinoColors.black
                 : CupertinoColors.white)
-                .withOpacity(0.7),
+                .withOpacity(0.8), // Augmenté l'opacité pour plus de lisibilité
             border: Border(
               bottom: BorderSide(
                 color: (isDarkMode
@@ -72,12 +81,13 @@ class AppScaffold extends StatelessWidget {
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center, // Centre verticalement
             children: [
-              // Titre
+              // Titre - Augmenté la taille du texte
               Text(
                 title,
                 style: TextStyle(
-                  fontSize: 20,
+                  fontSize: 20, // Taille de texte augmentée
                   fontWeight: FontWeight.bold,
                   color: CupertinoTheme.of(context).textTheme.textStyle.color,
                 ),
