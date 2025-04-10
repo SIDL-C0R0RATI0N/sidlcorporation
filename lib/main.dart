@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import 'package:sidlcorporation/app/app.dart';
+import 'package:sidlcorporation/config/theme_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -11,5 +13,10 @@ void main() async {
     DeviceOrientation.portraitDown,
   ]);
 
-  runApp(const SidlApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => ThemeProvider(),
+      child: const SidlApp(),
+    ),
+  );
 }

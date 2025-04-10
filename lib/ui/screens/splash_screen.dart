@@ -37,7 +37,7 @@ class _SplashScreenState extends State<SplashScreen> {
               width: 120,
               height: 120,
               decoration: BoxDecoration(
-                color: CupertinoColors.systemBlue,
+                color: CupertinoTheme.of(context).primaryColor,
                 borderRadius: BorderRadius.circular(20),
               ),
               child: const Center(
@@ -52,11 +52,12 @@ class _SplashScreenState extends State<SplashScreen> {
               ),
             ),
             const SizedBox(height: 24),
-            const Text(
+            Text(
               'SIDL CORPORATION',
               style: TextStyle(
                 fontSize: 28,
                 fontWeight: FontWeight.bold,
+                color: CupertinoTheme.of(context).textTheme.textStyle.color,
               ),
             ),
             const SizedBox(height: 48),
