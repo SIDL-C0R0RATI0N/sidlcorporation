@@ -3,6 +3,9 @@ import 'package:flutter/services.dart';
 import '../widgets/web_view_container.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:provider/provider.dart';
+import '../utils/theme_provider.dart' as utils;
+import '../utils/theme_provider.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({Key? key}) : super(key: key);
@@ -12,29 +15,35 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  bool _isDarkMode = false;
-  bool _notificationsEnabled = true;
   String _appVersion = '';
   String _buildNumber = '';
+  bool _notificationsEnabled = true;
+  utils.ThemeMode _selectedThemeMode = utils.ThemeMode.system;
 
   @override
   void initState() {
     super.initState();
     _loadSettings();
     _getAppInfo();
+    _initThemeMode();
+  }
+
+  void _initThemeMode() {
+    final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
+    setState(() {
+      _selectedThemeMode = themeProvider.themeMode;
+    });
   }
 
   Future<void> _loadSettings() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
-      _isDarkMode = prefs.getBool('darkMode') ?? false;
       _notificationsEnabled = prefs.getBool('notifications') ?? true;
     });
   }
 
   Future<void> _saveSettings() async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('darkMode', _isDarkMode);
     await prefs.setBool('notifications', _notificationsEnabled);
   }
 
@@ -46,14 +55,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
     });
   }
 
-  void _toggleDarkMode(bool value) {
+  void _changeThemeMode(utils.ThemeMode themeMode) {
+    final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
+    themeProvider.setThemeMode(themeMode);
     setState(() {
-      _isDarkMode = value;
+      _selectedThemeMode = themeMode;
     });
-    _saveSettings();
-
-    // Idéalement, cette valeur devrait être utilisée pour changer le thème de l'application
-    // Dans une implémentation complète, vous utiliseriez un gestionnaire d'état comme Provider
   }
 
   void _toggleNotifications(bool value) {
@@ -79,13 +86,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
           _buildSettingsCard(
             context,
             children: [
-              _buildSwitchTile(
+              _buildThemeModeTile(
                 context,
-                title: 'Mode sombre',
-                subtitle: 'Activer le thème sombre',
-                value: _isDarkMode,
-                onChanged: _toggleDarkMode,
-                icon: Icons.dark_mode,
+                title: 'Thème de l\'application',
+                icon: Icons.palette,
               ),
             ],
           ),
@@ -340,6 +344,127 @@ class _SettingsScreenState extends State<SettingsScreen> {
       ),
       trailing: const Icon(Icons.arrow_forward_ios, size: 16),
       onTap: onTap,
+    );
+  }
+
+  Widget _buildThemeModeTile(
+      BuildContext context, {
+        required String title,
+        required IconData icon,
+      }) {
+    return ListTile(
+      leading: Icon(
+        icon,
+        color: Theme.of(context).primaryColor,
+      ),
+      title: Text(
+        title,
+        style: const TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+      subtitle: _getThemeModeSubtitle(),
+      onTap: () => _showThemeModeDialog(context),
+    );
+  }
+
+  Widget _getThemeModeSubtitle() {
+    String themeModeText;
+    switch (_selectedThemeMode) {
+      case utils.ThemeMode.system:
+        themeModeText = 'Utiliser le thème du système';
+        break;
+      case utils.ThemeMode.light:
+        themeModeText = 'Mode clair';
+        break;
+      case utils.ThemeMode.dark:
+        themeModeText = 'Mode sombre';
+        break;
+    }
+
+    return Text(
+      themeModeText,
+      style: TextStyle(
+        fontSize: 14,
+        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+      ),
+    );
+  }
+
+  void _showThemeModeDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Thème de l\'application'),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _buildThemeModeOption(
+                context,
+                title: 'Système',
+                subtitle: 'Utiliser le thème du système',
+                icon: Icons.brightness_auto,
+                themeMode: utils.ThemeMode.system,
+              ),
+              const Divider(),
+              _buildThemeModeOption(
+                context,
+                title: 'Clair',
+                subtitle: 'Toujours utiliser le thème clair',
+                icon: Icons.brightness_high,
+                themeMode: utils.ThemeMode.light,
+              ),
+              const Divider(),
+              _buildThemeModeOption(
+                context,
+                title: 'Sombre',
+                subtitle: 'Toujours utiliser le thème sombre',
+                icon: Icons.brightness_2,
+                themeMode: utils.ThemeMode.dark,
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildThemeModeOption(
+      BuildContext context, {
+        required String title,
+        required String subtitle,
+        required IconData icon,
+        required utils.ThemeMode themeMode,
+      }) {
+    final isSelected = _selectedThemeMode == themeMode;
+
+    return ListTile(
+      leading: Icon(
+        icon,
+        color: isSelected ? Theme.of(context).primaryColor : null,
+      ),
+      title: Text(
+        title,
+        style: TextStyle(
+          fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+        ),
+      ),
+      subtitle: Text(subtitle),
+      trailing: isSelected
+          ? Icon(
+        Icons.check_circle,
+        color: Theme.of(context).primaryColor,
+      )
+          : null,
+      onTap: () {
+        _changeThemeMode(themeMode);
+        Navigator.pop(context);
+      },
     );
   }
 }

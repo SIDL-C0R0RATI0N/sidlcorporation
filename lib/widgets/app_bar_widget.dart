@@ -54,8 +54,9 @@ class TranslucentAppBar extends StatelessWidget implements PreferredSizeWidget {
               title,
               style: TextStyle(
                 fontSize: 17,
-                fontWeight: FontWeight.w600,
+                fontWeight: FontWeight.w700,
                 color: isLightMode ? Colors.black : Colors.white,
+                letterSpacing: 0.2,
               ),
             ),
             centerTitle: true,

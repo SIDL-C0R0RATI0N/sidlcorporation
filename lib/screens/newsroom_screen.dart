@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../api/api_service.dart';
 import '../models/news_model.dart';
 import '../widgets/news_card.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 class NewsroomScreen extends StatefulWidget {
   const NewsroomScreen({Key? key}) : super(key: key);
@@ -18,13 +19,15 @@ class _NewsroomScreenState extends State<NewsroomScreen> {
   @override
   void initState() {
     super.initState();
-    _newsFuture = _fetchNews();
+    // Initialiser les données de localisation pour la formatation des dates
+    initializeDateFormatting('fr_FR', null).then((_) {
+      _newsFuture = _fetchNews();
+    });
   }
 
   Future<List<NewsItem>> _fetchNews() async {
     try {
-      final newsData = await _apiService.getNews();
-      return newsData.map((json) => NewsItem.fromJson(json)).toList();
+      return await _apiService.getNews();
     } catch (error) {
       throw Exception('Erreur lors du chargement des actualités: $error');
     }
@@ -38,9 +41,7 @@ class _NewsroomScreenState extends State<NewsroomScreen> {
     try {
       final newsData = await _apiService.getNews();
       setState(() {
-        _newsFuture = Future.value(
-          newsData.map((json) => NewsItem.fromJson(json)).toList(),
-        );
+        _newsFuture = Future.value(newsData);
         _isRefreshing = false;
       });
     } catch (error) {
