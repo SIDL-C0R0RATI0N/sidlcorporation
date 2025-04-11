@@ -1,7 +1,7 @@
 name: sidlcorporation
 description: "Application officiel de l'entreprise SIDL CORPORATION"
 publish_to: 'SIDL CORPORATION'
-version: 0.1.0+2
+version: 0.1.0+3
 
 environment:
   sdk: '>=3.0.0 <4.0.0'
@@ -10,19 +10,31 @@ dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.5
-  http: ^1.1.0
+  flutter_svg: ^2.0.7
+  cached_network_image: ^3.3.0
+  shimmer: ^3.0.0
+  lottie: ^2.6.0
+
+  # Navigation
   webview_flutter: ^4.2.2
-  url_launcher: ^6.1.12
-  cached_network_image: ^3.2.3
+  url_launcher: ^6.1.14
+
+  # Gestion d'état et stockage
   provider: ^6.0.5
-  shared_preferences: ^2.2.0
-  xml: ^6.3.0
-  html: ^0.15.4
-  intl: ^0.20.2
-  flutter_html: ^3.0.0-beta.2
-  flutter_native_splash: ^2.3.1
-  flutter_launcher_icons: ^0.14.3
-  package_info_plus: ^8.3.0
+  shared_preferences: ^2.2.1
+
+  # Requêtes réseau et API
+  http: ^1.1.0
+  connectivity_plus: ^4.0.2
+
+  # Utilitaires
+  intl: ^0.18.1
+  package_info_plus: ^4.1.0
+  device_info_plus: ^9.0.3
+  path_provider: ^2.1.1
+
+  # Notifications
+  flutter_local_notifications: ^15.1.0+1
 
 dev_dependencies:
   flutter_test:
