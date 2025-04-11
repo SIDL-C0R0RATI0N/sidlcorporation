@@ -1,7 +1,7 @@
 name: sidlcorporation
 description: "Application officiel de l'entreprise SIDL CORPORATION"
 publish_to: 'SIDL CORPORATION'
-version: 0.1.0+4
+version: 0.1.0+5
 
 environment:
   sdk: '>=3.0.0 <4.0.0'
