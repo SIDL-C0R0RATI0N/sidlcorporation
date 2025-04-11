@@ -1,25 +1,32 @@
 import 'package:flutter/material.dart';
 import '../models/news_model.dart';
 import '../widgets/web_view_container.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'dart:ui';
 
 class NewsCard extends StatelessWidget {
   final NewsItem news;
+  final bool isFirstCard;
 
   const NewsCard({
     Key? key,
     required this.news,
+    this.isFirstCard = false,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      clipBehavior: Clip.antiAlias,
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
+    final brightness = Theme.of(context).brightness;
+    final isLightMode = brightness == Brightness.light;
+
+    return Padding(
+      padding: EdgeInsets.only(
+          left: 16,
+          right: 16,
+          top: isFirstCard ? 0 : 12,
+          bottom: 12
       ),
-      elevation: 0,
-      child: InkWell(
+      child: GestureDetector(
         onTap: () {
           if (news.link != null && news.link!.isNotEmpty) {
             Navigator.push(
@@ -33,102 +40,182 @@ class NewsCard extends StatelessWidget {
             );
           }
         },
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Image
-            AspectRatio(
-              aspectRatio: 16 / 9,
-              child: Image.network(
-                news.imageUrl,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return Container(
-                    color: Colors.grey.shade200,
-                    child: const Center(
-                      child: Icon(
-                        Icons.image_not_supported,
-                        size: 48,
-                        color: Colors.grey,
-                      ),
-                    ),
-                  );
-                },
-                loadingBuilder: (context, child, loadingProgress) {
-                  if (loadingProgress == null) return child;
-                  return Container(
-                    color: Colors.grey.shade200,
-                    child: Center(
-                      child: CircularProgressIndicator(
-                        value: loadingProgress.expectedTotalBytes != null
-                            ? loadingProgress.cumulativeBytesLoaded /
-                            loadingProgress.expectedTotalBytes!
-                            : null,
-                      ),
-                    ),
-                  );
-                },
+        child: Container(
+          decoration: BoxDecoration(
+            color: isLightMode ? Colors.white : const Color(0xFF1C1C1E),
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              BoxShadow(
+                color: isLightMode
+                    ? Colors.black.withOpacity(0.05)
+                    : Colors.black.withOpacity(0.2),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
               ),
+            ],
+          ),
+          clipBehavior: Clip.antiAlias,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Image section
+              _buildImageSection(context),
+
+              // Content section
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Date
+                    Text(
+                      news.date,
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: Theme.of(context).primaryColor,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+
+                    // Title
+                    Text(
+                      news.title,
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        height: 1.3,
+                        color: isLightMode ? Colors.black : Colors.white,
+                      ),
+                      maxLines: 3,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 8),
+
+                    // Description
+                    Text(
+                      news.description,
+                      style: TextStyle(
+                        fontSize: 14,
+                        height: 1.4,
+                        color: isLightMode
+                            ? Colors.black.withOpacity(0.7)
+                            : Colors.white.withOpacity(0.7),
+                      ),
+                      maxLines: 3,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+
+                    // Read more button
+                    if (news.link != null && news.link!.isNotEmpty)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 12.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 6
+                              ),
+                              decoration: BoxDecoration(
+                                color: Theme.of(context).primaryColor.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    'Lire plus',
+                                    style: TextStyle(
+                                      color: Theme.of(context).primaryColor,
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 13,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 4),
+                                  Icon(
+                                    Icons.arrow_forward_rounded,
+                                    size: 14,
+                                    color: Theme.of(context).primaryColor,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildImageSection(BuildContext context) {
+    // Si l'article a une URL d'image valide
+    if (news.hasImage) {
+      return Container(
+        height: 200,
+        width: double.infinity,
+        child: CachedNetworkImage(
+          imageUrl: news.imageUrl,
+          fit: BoxFit.cover,
+          placeholder: (context, url) => _buildImagePlaceholder(context),
+          errorWidget: (context, url, error) => _buildImageErrorWidget(context),
+        ),
+      );
+    }
+    // Sinon, utiliser l'image par défaut
+    else {
+      return Container(
+        height: 160,
+        width: double.infinity,
+        child: _buildImagePlaceholder(context),
+      );
+    }
+  }
+
+  Widget _buildImagePlaceholder(BuildContext context) {
+    final brightness = Theme.of(context).brightness;
+    final isLightMode = brightness == Brightness.light;
+
+    return Container(
+      color: isLightMode ? Colors.grey.shade200 : Colors.grey.shade800,
+      child: Center(
+        child: Icon(
+          Icons.photo,
+          size: 48,
+          color: isLightMode ? Colors.grey.shade400 : Colors.grey.shade600,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildImageErrorWidget(BuildContext context) {
+    final brightness = Theme.of(context).brightness;
+    final isLightMode = brightness == Brightness.light;
+
+    return Container(
+      color: isLightMode ? Colors.grey.shade200 : Colors.grey.shade800,
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.broken_image_rounded,
+              size: 40,
+              color: isLightMode ? Colors.grey.shade400 : Colors.grey.shade600,
             ),
-            // Contenu
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Date
-                  Text(
-                    news.date,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Theme.of(context).colorScheme.primary,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  // Titre
-                  Text(
-                    news.title,
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 8),
-                  // Description
-                  Text(
-                    news.description,
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Theme.of(context).colorScheme.onSurface.withOpacity(0.8),
-                    ),
-                    maxLines: 3,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 12),
-                  // Lien si disponible
-                  if (news.link != null && news.link!.isNotEmpty)
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Text(
-                          'Lire plus',
-                          style: TextStyle(
-                            color: Theme.of(context).colorScheme.primary,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        const SizedBox(width: 4),
-                        Icon(
-                          Icons.arrow_forward_ios,
-                          size: 12,
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
-                      ],
-                    ),
-                ],
+            const SizedBox(height: 8),
+            Text(
+              'Image non disponible',
+              style: TextStyle(
+                color: isLightMode ? Colors.grey.shade600 : Colors.grey.shade400,
+                fontSize: 12,
               ),
             ),
           ],

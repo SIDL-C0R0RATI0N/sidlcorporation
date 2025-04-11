@@ -6,8 +6,13 @@ class AppConfig {
   static const String appName = 'SIDL CORPORATION';
   static const String appDescription = 'Application officielle de SIDL CORPORATION';
 
+  // Information de version (remplace PackageInfo)
+  static const String appVersion = '0.1.0';
+  static const String buildNumber = '4';
+
   // Configuration des liens
   static const String websiteUrl = 'https://sidl-corporation.fr';
+  static const String rssUrl = 'https://www.sidl-corporation.fr/feed';
   static const String privacyPolicyUrl = 'https://sidl-corporation.fr/privacy';
   static const String termsOfServiceUrl = 'https://sidl-corporation.fr/terms';
   static const String supportUrl = 'https://sidl-corporation.fr/contact';

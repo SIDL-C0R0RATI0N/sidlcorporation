@@ -27,17 +27,15 @@ dependencies:
 
   # Requêtes réseau et API
   http: ^1.1.0
-  connectivity_plus: ^4.0.2
+  internet_connection_checker: ^1.0.0+1  # Remplace connectivity_plus
   xml: ^6.3.0
 
   # Utilitaires
   intl: ^0.18.1
-  package_info_plus: ^4.1.0
-  device_info_plus: ^9.0.3
   path_provider: ^2.1.1
 
-  # Notifications
-  flutter_local_notifications: ^15.1.0+1
+  # Notifications (optionnel)
+  # firebase_messaging: ^14.6.8  # Alternative à flutter_local_notifications
 
 dev_dependencies:
   flutter_test:
@@ -53,10 +51,8 @@ flutter:
 # Configuration du splash screen
 flutter_native_splash:
   color: "#FFFFFF"
-  image: assets/images/logo.png
   fullscreen: false
   ios: true
-  web_image_mode: center
 
 # Configuration des icônes de l'application
 flutter_launcher_icons:

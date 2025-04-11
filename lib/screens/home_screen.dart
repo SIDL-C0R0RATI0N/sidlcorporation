@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../widgets/app_bar_widget.dart';
 import '../widgets/bottom_nav_bar.dart';
 import '../widgets/web_view_container.dart';
@@ -21,6 +22,17 @@ class _HomeScreenState extends State<HomeScreen> {
     const NewsroomScreen(),
     const SettingsScreen(),
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    // Configurer correctement la barre de statut pour afficher les icônes système
+    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: Brightness.dark, // Icônes sombres pour le mode clair
+      statusBarBrightness: Brightness.light, // Mode clair par défaut
+    ));
+  }
 
   @override
   void dispose() {
@@ -47,12 +59,24 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Mettre à jour la barre d'état en fonction du thème
+    final brightness = Theme.of(context).brightness;
+    final isDarkMode = brightness == Brightness.dark;
+
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: isDarkMode ? Brightness.light : Brightness.dark,
+      statusBarBrightness: isDarkMode ? Brightness.dark : Brightness.light,
+    ));
+
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: TranslucentAppBar(
         title: _getAppBarTitle(),
         showBackButton: false,
         actions: _getAppBarActions(),
+        height: 56.0,
+        blurStrength: 15.0,
       ),
       body: PageView(
         controller: _pageController,
@@ -84,25 +108,70 @@ class _HomeScreenState extends State<HomeScreen> {
     switch (_currentIndex) {
       case 0:
         return [
-          IconButton(
-            icon: const Icon(Icons.search),
+          // Action button with background for home screen
+          _buildActionButton(
+            icon: Icons.search,
             onPressed: () {
               // Action de recherche
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Recherche non disponible pour le moment'),
+                  behavior: SnackBarBehavior.floating,
+                ),
+              );
             },
           ),
         ];
       case 1:
         return [
-          IconButton(
-            icon: const Icon(Icons.refresh),
+          // Action button with background for newsroom
+          _buildActionButton(
+            icon: Icons.refresh_rounded,
             onPressed: () {
-              // Action de rafraîchissement des news
+              // Force reload of newsroom
+              setState(() {
+                _screens[1] = const NewsroomScreen();
+              });
+
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Actualisation...'),
+                  duration: Duration(seconds: 1),
+                  behavior: SnackBarBehavior.floating,
+                ),
+              );
             },
           ),
         ];
       default:
         return null;
     }
+  }
+
+  Widget _buildActionButton({
+    required IconData icon,
+    required VoidCallback onPressed,
+  }) {
+    final brightness = Theme.of(context).brightness;
+    final isLightMode = brightness == Brightness.light;
+
+    return Container(
+      margin: const EdgeInsets.only(right: 8),
+      decoration: BoxDecoration(
+        color: isLightMode
+            ? Colors.black.withOpacity(0.05)
+            : Colors.white.withOpacity(0.05),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: IconButton(
+        icon: Icon(
+          icon,
+          color: isLightMode ? Colors.black : Colors.white,
+          size: 24,
+        ),
+        onPressed: onPressed,
+      ),
+    );
   }
 }
 
@@ -113,43 +182,54 @@ class _HomeScreenContent extends StatelessWidget {
   Widget build(BuildContext context) {
     final brightness = Theme.of(context).brightness;
     final isLightMode = brightness == Brightness.light;
+    final primaryColor = Theme.of(context).primaryColor;
 
     return SingleChildScrollView(
       physics: const BouncingScrollPhysics(),
-      child: Padding(
-        padding: const EdgeInsets.only(top: 100, bottom: 20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Bannière d'accueil
-            Container(
-              margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              height: 180,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(16),
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    Theme.of(context).primaryColor,
-                    Theme.of(context).colorScheme.secondary,
+      child: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.only(top: 16, bottom: 90),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Bannière d'accueil
+              Container(
+                margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding: const EdgeInsets.all(24),
+                height: 200,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(24),
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      primaryColor,
+                      primaryColor.withBlue(primaryColor.blue + 40),
+                    ],
+                    stops: const [0.0, 1.0],
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: primaryColor.withOpacity(0.3),
+                      blurRadius: 20,
+                      offset: const Offset(0, 10),
+                    ),
                   ],
                 ),
-              ),
-              child: Stack(
-                children: [
-                  Positioned(
-                    right: -20,
-                    bottom: -20,
-                    child: Icon(
-                      Icons.business,
-                      size: 140,
-                      color: Colors.white.withOpacity(0.2),
+                child: Stack(
+                  children: [
+                    // Élément décoratif
+                    Positioned(
+                      right: -30,
+                      bottom: -30,
+                      child: Icon(
+                        Icons.business_rounded,
+                        size: 150,
+                        color: Colors.white.withOpacity(0.2),
+                      ),
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(20),
-                    child: Column(
+                    // Contenu de la bannière
+                    Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -157,8 +237,8 @@ class _HomeScreenContent extends StatelessWidget {
                           'Bienvenue chez',
                           style: TextStyle(
                             color: Colors.white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w400,
                           ),
                         ),
                         const SizedBox(height: 8),
@@ -166,11 +246,13 @@ class _HomeScreenContent extends StatelessWidget {
                           'SIDL CORPORATION',
                           style: TextStyle(
                             color: Colors.white,
-                            fontSize: 24,
+                            fontSize: 28,
                             fontWeight: FontWeight.bold,
+                            letterSpacing: -0.5,
                           ),
                         ),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: 20),
+                        // Bouton d'action
                         ElevatedButton(
                           onPressed: () {
                             Navigator.push(
@@ -185,142 +267,183 @@ class _HomeScreenContent extends StatelessWidget {
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.white,
-                            foregroundColor: Theme.of(context).primaryColor,
-                            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                            foregroundColor: primaryColor,
+                            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(30),
                             ),
+                            elevation: 0,
                           ),
-                          child: const Text('Découvrir'),
+                          child: const Text(
+                            'Découvrir',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
+                          ),
                         ),
                       ],
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
 
-            // Section Services
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'Nos Services',
-                    style: TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
+              // Section Services
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Nos Services',
+                      style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: -0.5,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 16),
-                  GridView.count(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    crossAxisCount: 2,
-                    mainAxisSpacing: 16,
-                    crossAxisSpacing: 16,
-                    children: [
-                      _buildServiceCard(
-                        context,
-                        'Web',
-                        Icons.web,
-                            () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const WebViewContainer(
-                                url: 'https://sidl-corporation.fr/services/web',
-                                title: 'Services Web',
+                    const SizedBox(height: 16),
+                    GridView.count(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      crossAxisCount: 2,
+                      mainAxisSpacing: 16,
+                      crossAxisSpacing: 16,
+                      childAspectRatio: 1.05,
+                      children: [
+                        _buildServiceCard(
+                          context,
+                          'Web',
+                          Icons.web_rounded,
+                              () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const WebViewContainer(
+                                  url: 'https://sidl-corporation.fr/services/web',
+                                  title: 'Services Web',
+                                ),
                               ),
-                            ),
-                          );
-                        },
-                      ),
-                      _buildServiceCard(
-                        context,
-                        'Mobile',
-                        Icons.smartphone,
-                            () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const WebViewContainer(
-                                url: 'https://sidl-corporation.fr/services/mobile',
-                                title: 'Services Mobile',
+                            );
+                          },
+                        ),
+                        _buildServiceCard(
+                          context,
+                          'Mobile',
+                          Icons.smartphone_rounded,
+                              () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const WebViewContainer(
+                                  url: 'https://sidl-corporation.fr/services/mobile',
+                                  title: 'Services Mobile',
+                                ),
                               ),
-                            ),
-                          );
-                        },
-                      ),
-                      _buildServiceCard(
-                        context,
-                        'Design',
-                        Icons.palette,
-                            () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const WebViewContainer(
-                                url: 'https://sidl-corporation.fr/services/design',
-                                title: 'Services Design',
+                            );
+                          },
+                        ),
+                        _buildServiceCard(
+                          context,
+                          'Design',
+                          Icons.palette_rounded,
+                              () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const WebViewContainer(
+                                  url: 'https://sidl-corporation.fr/services/design',
+                                  title: 'Services Design',
+                                ),
                               ),
-                            ),
-                          );
-                        },
-                      ),
-                      _buildServiceCard(
-                        context,
-                        'Conseil',
-                        Icons.lightbulb,
-                            () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const WebViewContainer(
-                                url: 'https://sidl-corporation.fr/services/conseil',
-                                title: 'Services Conseil',
+                            );
+                          },
+                        ),
+                        _buildServiceCard(
+                          context,
+                          'Conseil',
+                          Icons.lightbulb_rounded,
+                              () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const WebViewContainer(
+                                  url: 'https://sidl-corporation.fr/services/conseil',
+                                  title: 'Services Conseil',
+                                ),
                               ),
-                            ),
-                          );
-                        },
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+
+              // Section À propos
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                child: Container(
+                  padding: const EdgeInsets.all(24),
+                  decoration: BoxDecoration(
+                    color: isLightMode ? Colors.white : const Color(0xFF1C1C1E),
+                    borderRadius: BorderRadius.circular(24),
+                    boxShadow: [
+                      BoxShadow(
+                        color: isLightMode
+                            ? Colors.black.withOpacity(0.05)
+                            : Colors.black.withOpacity(0.2),
+                        blurRadius: 10,
+                        offset: const Offset(0, 4),
                       ),
                     ],
                   ),
-                ],
-              ),
-            ),
-
-            // Section À propos
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-              child: Card(
-                elevation: 0,
-                color: isLightMode ? Colors.white : const Color(0xFF1C1C1E),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(20),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        'À propos de nous',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
+                      Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              color: primaryColor.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Icon(
+                              Icons.info_rounded,
+                              color: primaryColor,
+                              size: 24,
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          const Text(
+                            'À propos de nous',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: -0.5,
+                            ),
+                          ),
+                        ],
                       ),
-                      const SizedBox(height: 12),
+                      const SizedBox(height: 16),
                       const Text(
                         'SIDL Corporation est une entreprise spécialisée dans le développement de solutions numériques innovantes pour les entreprises et les particuliers.',
                         style: TextStyle(
-                          fontSize: 14,
+                          fontSize: 16,
                           height: 1.5,
                         ),
                       ),
                       const SizedBox(height: 16),
+                      const Text(
+                        'Notre équipe d\'experts vous accompagne dans la réalisation de vos projets web, mobile et design pour créer des expériences utilisateur exceptionnelles.',
+                        style: TextStyle(
+                          fontSize: 16,
+                          height: 1.5,
+                        ),
+                      ),
+                      const SizedBox(height: 24),
                       OutlinedButton(
                         onPressed: () {
                           Navigator.push(
@@ -334,18 +457,25 @@ class _HomeScreenContent extends StatelessWidget {
                           );
                         },
                         style: OutlinedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(30),
                           ),
+                          side: BorderSide(color: primaryColor),
                         ),
-                        child: const Text('En savoir plus'),
+                        child: const Text(
+                          'En savoir plus',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ),
                     ],
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -359,33 +489,57 @@ class _HomeScreenContent extends StatelessWidget {
       ) {
     final brightness = Theme.of(context).brightness;
     final isLightMode = brightness == Brightness.light;
+    final primaryColor = Theme.of(context).primaryColor;
 
-    return Card(
-      elevation: 0,
-      color: isLightMode ? Colors.white : const Color(0xFF1C1C1E),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
+    return Container(
+      decoration: BoxDecoration(
+        color: isLightMode ? Colors.white : const Color(0xFF1C1C1E),
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: isLightMode
+                ? Colors.black.withOpacity(0.05)
+                : Colors.black.withOpacity(0.2),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(16),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              icon,
-              size: 48,
-              color: Theme.of(context).primaryColor,
+      child: Material(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(20),
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(20),
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  width: 60,
+                  height: 60,
+                  decoration: BoxDecoration(
+                    color: primaryColor.withOpacity(0.1),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    icon,
+                    size: 30,
+                    color: primaryColor,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(height: 12),
-            Text(
-              title,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ],
+          ),
         ),
       ),
     );
